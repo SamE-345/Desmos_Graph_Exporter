@@ -1,0 +1,25 @@
+
+{
+  "name": "Desmos Git Sync",
+  "version": "1.0",
+  "manifest_version": 3,
+  "description": "Sync Desmos graphs with GitHub",
+  "permissions": ["storage", "activeTab", "scripting"],
+  "host_permissions": ["https://www.desmos.com/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.desmos.com/calculator*"],
+      "js": ["content.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["inject.js"],
+      "matches": ["https://www.desmos.com/*"]
+    }
+  ]
+}
