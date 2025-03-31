@@ -1,0 +1,24 @@
+{
+  "version": 11,
+  "randomSeed": "80bcf705876f89f3fce0bf2b98c4759c",
+  "graph": {
+    "viewport": {
+      "xmin": -10,
+      "ymin": -6.242284421567563,
+      "xmax": 10,
+      "ymax": 6.242284421567563
+    }
+  },
+  "expressions": {
+    "list": [
+      {
+        "type": "expression",
+        "id": "1",
+        "color": "#c74440",
+        "latex": "\\log\\left(x!\\right)"
+      }
+    ]
+  },
+  "includeFunctionParametersInRandomSeed": true,
+  "doNotMigrateMovablePointStyle": true
+}
