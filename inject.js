@@ -1,4 +1,3 @@
-
 function waitForDesmosAPI(callback, attempts = 20) {
   if (window.Calc) {
     callback();
@@ -13,42 +12,53 @@ function waitForDesmosAPI(callback, attempts = 20) {
 }
 
 function addExportButton() {
-  // Prevent adding multiple buttons
   if (document.getElementById("desmos-git-export")) return;
   
-  // Create button element
   const btn = document.createElement("button");
   btn.id = "desmos-git-export";
   btn.innerText = "Export Graph";
   btn.style.cssText = "position: fixed; top: 10px; right: 10px; z-index: 10000; padding: 8px 12px; background-color: #008CBA; color: white; border: none; border-radius: 5px; cursor: pointer;";
-  
-  // Set up click handler
   btn.addEventListener("click", exportGraph);
   document.body.appendChild(btn);
 }
 
+function addImportButton(){
+  if (document.getElementById("desmos-git-import")) return;
+
+  const btn = document.createElement("button");
+  btn.id = "desmos-git-import";
+  btn.innerText = "Import Graph";
+  btn.style.cssText = "position: fixed; top: 10px; right: 130px; z-index: 10000; padding: 8px 12px; background-color: #008CBA; color: white; border: none; border-radius: 5px; cursor: pointer;";
+  btn.addEventListener("click", importGraph);
+  document.body.appendChild(btn);
+}
 
 function exportGraph() {
-    if (!window.Calc) {
-      alert("Desmos API not found");
-      return;
-    }
-    const graphData = window.Calc.getState();
-    window.postMessage({ type: "EXPORT_GRAPH", data: graphData }, "*");
+  if (!window.Calc) {
+    alert("❌ Desmos API not found");
+    return;
   }
-  
-    
+  const graphData = window.Calc.getState();
+  window.postMessage({ type: "EXPORT_GRAPH", data: graphData }, "*");
+}
 
-// Wait for Desmos API to be ready, then add the export button
+function importGraph() {
+  window.postMessage({ type: "IMPORT_GRAPH" }, "*");
+}
+
 waitForDesmosAPI(() => {
-  console.log("Desmos API is ready, setting up export button.");
+  console.log("Desmos API is ready, setting up buttons.");
   addExportButton();
-  
-  // Set up MutationObserver to re-add the button if it's removed
+  addImportButton();
+
   const observer = new MutationObserver(() => {
     if (!document.getElementById("desmos-git-export")) {
       addExportButton();
     }
+    if (!document.getElementById("desmos-git-import")) {
+      addImportButton();
+    }
   });
+
   observer.observe(document.body, { childList: true, subtree: true });
 });

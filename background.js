@@ -1,43 +1,45 @@
-
-
+const GITHUB_TOKEN = "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"; 
 
 chrome.runtime.onInstalled.addListener(() => {
   chrome.storage.local.set({ githubToken: GITHUB_TOKEN }, () => {
-    console.log("🔑 GitHub token stored!");
+    console.log("GitHub token stored!");
   });
 });
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  console.log("📬 Message received in background.js:", message);
+  console.log("Message received in background.js:", message);
 
-  if (message.action === "exportGraph") {
-    console.log("📦 Exporting graph data:", message.data);
+  chrome.storage.local.get("githubToken", async (result) => {
+    const token = result.githubToken;
+    if (!token) {
+      console.error("GitHub token is missing!");
+      sendResponse({ success: false, error: "GitHub token not found." });
+      return;
+    }
 
-    chrome.storage.local.get("githubToken", (result) => {
-      const token = result.githubToken;
-      if (!token) {
-        console.error("GitHub token is missing!");
-        sendResponse({ success: false, error: "GitHub token not found." });
-        return;
-      }
+    const repoOwner = "SamE-345";
+    const repoName = "Desmos_Graph_Exporter";
+    const filePath = "Desmos/graph.json";
 
+    if (message.action === "exportGraph") {
+      console.log("Exporting graph data:", message.data);
       const graphData = JSON.stringify(message.data, null, 2);
-      const repoOwner = "SamE-345";
-      const repoName = "Desmos_Graph_Exporter";
-      const filePath = "Desmos/graph.json"; // Change this if needed
       const commitMessage = "Auto-exported Desmos graph";
-
       uploadToGitHub(repoOwner, repoName, filePath, graphData, commitMessage, token, sendResponse);
-    });
+    }
 
-    return true; 
-  }
+    if (message.action === "importGraph") {
+      console.log("Importing graph from GitHub...");
+      importFromGitHub(repoOwner, repoName, filePath, token, sendResponse);
+    }
+  });
+
+  return true; 
 });
 
 // Function to upload file to GitHub
 async function uploadToGitHub(owner, repo, path, content, message, token, sendResponse) {
   const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
-
 
   let sha = null;
   try {
@@ -46,20 +48,18 @@ async function uploadToGitHub(owner, repo, path, content, message, token, sendRe
     });
     if (fileRes.ok) {
       const fileData = await fileRes.json();
-      sha = fileData.sha; 
+      sha = fileData.sha;
     }
   } catch (err) {
     console.warn("File might not exist");
   }
 
-
   const body = JSON.stringify({
     message,
-    content: btoa(unescape(encodeURIComponent(content))), 
-    sha 
+    content: btoa(unescape(encodeURIComponent(content))),
+    sha
   });
 
-  // Upload to GitHub
   fetch(apiUrl, {
     method: "PUT",
     headers: {
@@ -82,4 +82,29 @@ async function uploadToGitHub(owner, repo, path, content, message, token, sendRe
       console.error("Error uploading to GitHub:", err);
       sendResponse({ success: false, error: err.message });
     });
+}
+
+// ✅ Function to import a file from GitHub
+async function importFromGitHub(owner, repo, path, token, sendResponse) {
+  const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
+
+  try {
+    const response = await fetch(apiUrl, {
+      headers: { Authorization: `token ${token}` }
+    });
+
+    if (!response.ok) throw new Error("GitHub fetch failed");
+
+    const fileData = await response.json();
+    const graphJson = atob(fileData.content);
+
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      chrome.tabs.sendMessage(tabs[0].id, { action: "displayGraph", graphData: graphJson });
+    });
+
+    sendResponse({ success: true });
+  } catch (error) {
+    console.error("Error loading graph:", error);
+    sendResponse({ success: false, error: error.message });
+  }
 }
