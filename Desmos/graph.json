@@ -1,6 +1,6 @@
 {
   "version": 11,
-  "randomSeed": "80bcf705876f89f3fce0bf2b98c4759c",
+  "randomSeed": "6716b782e51028aaadac1011fdfc5aa0",
   "graph": {
     "viewport": {
       "xmin": -10,
@@ -15,7 +15,7 @@
         "type": "expression",
         "id": "1",
         "color": "#c74440",
-        "latex": "\\log\\left(x!\\right)"
+        "latex": "x^{2}+y^{2}=5"
       }
     ]
   },
