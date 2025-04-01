@@ -1,12 +1,12 @@
 {
   "version": 11,
-  "randomSeed": "6716b782e51028aaadac1011fdfc5aa0",
+  "randomSeed": "2c29c90518fca19150c3464ef179b169",
   "graph": {
     "viewport": {
-      "xmin": -10,
-      "ymin": -6.242284421567563,
-      "xmax": 10,
-      "ymax": 6.242284421567563
+      "xmin": -5.661451955507492,
+      "ymin": -3.974684815909103,
+      "xmax": 6.65252923528432,
+      "ymax": 3.712052479566461
     }
   },
   "expressions": {
@@ -15,7 +15,24 @@
         "type": "expression",
         "id": "1",
         "color": "#c74440",
-        "latex": "x^{2}+y^{2}=5"
+        "latex": "f\\left(x\\right)=e^{-x^{2}}"
+      },
+      {
+        "type": "expression",
+        "id": "2",
+        "color": "#2d70b3",
+        "latex": "y=\\int_{-a}^{a}f\\left(x\\right)\\ dx"
+      },
+      {
+        "type": "expression",
+        "id": "3",
+        "color": "#388c46",
+        "latex": "f'\\left(x\\right)"
+      },
+      {
+        "type": "expression",
+        "id": "4",
+        "color": "#6042a6"
       }
     ]
   },
