@@ -17,7 +17,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     chrome.storage.local.get("githubToken", (result) => {
       const token = result.githubToken;
       if (!token) {
-        console.error("❌ GitHub token missing!");
+        console.error("GitHub token missing!");
         sendResponse({ success: false, error: "GitHub token not found." });
         return;
       }
@@ -28,14 +28,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
   // Handle importGraph
   if (message.action === "importGraph") {
-    console.log("📥 Importing graph from GitHub:", message.filename);
+    console.log("Importing graph from GitHub:", message.filename);
     const repoOwner = "SamE-345";
     const repoName = "Desmos_Graph_Exporter";
     const filePath = `Desmos/${message.filename}`; // Use the filename provided by the user
     chrome.storage.local.get("githubToken", (result) => {
       const token = result.githubToken;
       if (!token) {
-        console.error("❌ GitHub token missing!");
+        console.error("GitHub token missing!");
         sendResponse({ success: false, error: "GitHub token not found." });
         return;
       }
@@ -49,8 +49,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     chrome.scripting.executeScript({
       target: { tabId: sender.tab.id },
       files: ["inject.js"]
-    }).then(() => console.log("✅ inject.js successfully injected"))
-      .catch(error => console.error("❌ Failed to inject inject.js:", error));
+    }).then(() => console.log("inject.js successfully injected"))
+      .catch(error => console.error("Failed to inject inject.js:", error));
   }
   return true;
 });
@@ -85,15 +85,15 @@ async function uploadToGitHub(owner, repo, path, content, message, token, sendRe
     .then((res) => res.json())
     .then((data) => {
       if (data.commit) {
-        console.log("✅ Graph successfully uploaded to GitHub:", data);
+        console.log("Graph successfully uploaded to GitHub:", data);
         sendResponse({ success: true, url: data.content.html_url });
       } else {
-        console.error("❌ GitHub upload failed:", data);
+        console.error("GitHub upload failed:", data);
         sendResponse({ success: false, error: data.message });
       }
     })
     .catch((err) => {
-      console.error("❌ Error uploading to GitHub:", err);
+      console.error("Error uploading to GitHub:", err);
       sendResponse({ success: false, error: err.message });
     });
 }
@@ -109,10 +109,10 @@ async function importFromGitHub(owner, repo, path, token, sendResponse) {
     }
     const fileData = await response.json();
     const content = atob(fileData.content); // Decode base64 content
-    console.log("✅ Graph imported from GitHub:", content);
+    console.log("Graph imported from GitHub:", content);
     sendResponse({ success: true, data: JSON.parse(content) });
   } catch (error) {
-    console.error("❌ Error importing from GitHub:", error);
+    console.error("Error importing from GitHub:", error);
     sendResponse({ success: false, error: error.message });
   }
 }
