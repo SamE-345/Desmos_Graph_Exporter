@@ -30,38 +30,19 @@ window.addEventListener("message", (event) => {
   } 
   
   else if (event.data.type === "IMPORT_GRAPH") {
-    chrome.runtime.sendMessage({ action: "importGraph", filename: "graph.json" }, (response) => {
-        console.log("📥 Response received from background.js:", response);
-    
-        if (chrome.runtime.lastError) {
-            console.error("❌ Error sending message to background:", chrome.runtime.lastError.message);
-            alert("Failed to communicate with background script.");
-            return;
-        }
-    
-        if (response && response.success) {
-            console.log("✅ Graph data received:", response.data);
-    
-            // Ensure Desmos API (window.Calc) is available
-            function waitForDesmosAPI(attempts = 20) {
-                if (window.Calc && typeof window.Calc.setState === "function") {
-                    console.log("🎯 Setting graph state...");
-                    window.Calc.setState(response.data);
-                    alert("Graph imported successfully!");
-                } else if (attempts > 0) {
-                    console.warn("⏳ Waiting for Desmos API...");
-                    setTimeout(() => waitForDesmosAPI(attempts - 1), 500);
-                } else {
-                    console.error("❌ Desmos API not available after multiple attempts.");
-                    alert("Error: Desmos API is unavailable.");
-                }
-            }
-    
-            waitForDesmosAPI();
-        } else {
-            console.error("❌ GitHub import failed:", response.error);
-            alert("Error importing graph");
-        }
-    });
+    // In content.js, after receiving response from background.js for importGraph:
+chrome.runtime.sendMessage({ action: "importGraph", filename: "graph.json" }, (response) => {
+    console.log("✅ Graph data received:", response.data);
+    if (response && response.success) {
+        // Forward the graph data to the page (inject.js) using window.postMessage
+        window.postMessage({ type: "DISPLAY_GRAPH", graphData: response.data }, "*");
+    } else {
+        console.error("❌ Error importing graph:", response.error);
+        alert("Error importing graph");
+    }
+});
+
+
   }
+  
 });

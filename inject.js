@@ -1,19 +1,32 @@
 // Function to wait for the Desmos API to load
-function waitForDesmosAPI(attempts = 20) {
-  if (window.Calc && typeof window.Calc.setState === "function") {
+function waitForDesmosAPI(attempts = 0, maxAttempts = 50) {
+  if (window.Desmos) {
       console.log("✅ Desmos API is ready!");
-      setupGraphButtons(); // Call the function to set up the buttons after API loads
-  } else if (attempts > 0) {
-      console.warn("⏳ Waiting for Desmos API...");
-      setTimeout(() => waitForDesmosAPI(attempts - 1), 500);
-  } else {
-      console.error("❌ Desmos API not available after multiple attempts.");
-      alert("Error: Desmos API is unavailable.");
+      setupGraphButtons();
+      return;
   }
-}
+
+  if (attempts >= maxAttempts) {
+      console.error("❌ Desmos API not available after multiple attempts.");
+      return;
+  }
+
+  console.log(`⏳ Waiting for Desmos API... (Attempt ${attempts + 1}/${maxAttempts})`);
+  
+  // Retry after 100ms
+  setTimeout(() => waitForDesmosAPI(attempts + 1, maxAttempts), 100);
+};
+
+waitForDesmosAPI();
+var Graph_Data;
 
 // Call the function when inject.js is executed
-waitForDesmosAPI();
+
+
+function setupGraphButtons(){
+  addExportButton();
+  addImportButton();
+}
 
 // Function to create and add the Export button
 function addExportButton() {
@@ -75,3 +88,37 @@ waitForDesmosAPI(() => {
   });
   observer.observe(document.body, { childList: true, subtree: true });
 });
+
+function ensureDesmosContainer() {
+  let existingContainer = document.querySelector("#desmos-container");
+
+  if (!existingContainer) {
+      existingContainer = document.createElement("div");
+      existingContainer.id = "desmos-container";
+      existingContainer.style.width = "600px";
+      existingContainer.style.height = "400px";
+      document.body.appendChild(existingContainer);
+      console.log("✅ Desmos container created!");
+  }
+
+  return existingContainer;
+}
+
+// Wait until the page loads to inject Desmos
+window.addEventListener("message", (event) => {
+  // Ensure we only process our own messages
+  if (event.source !== window) return;
+  if (event.data && event.data.type === "DISPLAY_GRAPH") {
+      console.log("Received DISPLAY_GRAPH message:", event.data.graphData);
+      if (window.Calc && typeof window.Calc.setState === "function") {
+          window.Calc.setState(event.data.graphData);
+          alert("✅ Graph imported successfully!");
+      } else {
+          console.error("❌ Desmos API not available in inject.js");
+      }
+  }
+});
+
+
+
+
