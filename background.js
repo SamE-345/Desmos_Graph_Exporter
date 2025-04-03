@@ -1,4 +1,4 @@
-const GITHUB_TOKEN = "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"; 
+const GITHUB_TOKEN = ""; //Use you github token here
 
 chrome.runtime.onInstalled.addListener(() => {
   chrome.storage.local.set({ githubToken: GITHUB_TOKEN }, () => {
@@ -11,9 +11,9 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
   // Handle exportGraph
   if (message.action === "exportGraph") {
-    const repoOwner = "SamE-345";
-    const repoName = "Desmos_Graph_Exporter";
-    const filePath = "Desmos/graph.json";
+    const repoOwner = ""; //Modify as needed
+    const repoName = "Desmos_Graph_Exporter"; //Repo name to your desired repo
+    const filePath = "Desmos/graph.json"; // Filepath inside the repo
     chrome.storage.local.get("githubToken", (result) => {
       const token = result.githubToken;
       if (!token) {
@@ -29,7 +29,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   // Handle importGraph
   if (message.action === "importGraph") {
     console.log("Importing graph from GitHub:", message.filename);
-    const repoOwner = "SamE-345";
+    const repoOwner = ""; //Modify these as needed
     const repoName = "Desmos_Graph_Exporter";
     const filePath = `Desmos/${message.filename}`; // Use the filename provided by the user
     chrome.storage.local.get("githubToken", (result) => {
