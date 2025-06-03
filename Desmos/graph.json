@@ -1,21 +1,49 @@
 {
   "version": 11,
-  "randomSeed": "4e4c810975490c3878567cb17d1e7436",
+  "randomSeed": "7fe117f1e1af66df868cd09d290335d9",
   "graph": {
     "viewport": {
-      "xmin": -10,
-      "ymin": -6.242284421567563,
-      "xmax": 10,
-      "ymax": 6.242284421567563
+      "xmin": -11.427358814776174,
+      "ymin": -5.410530751937376,
+      "xmax": 5.246771044780115,
+      "ymax": 4.997935354612888
+    },
+    "__v12ViewportLatexStash": {
+      "xmin": "-11.427358814776174",
+      "xmax": "5.246771044780115",
+      "ymin": "-5.410530751937376",
+      "ymax": "4.997935354612888"
     }
   },
   "expressions": {
     "list": [
       {
         "type": "expression",
+        "id": "2",
+        "color": "#2d70b3",
+        "latex": "x^{2}\\left\\{x>0\\right\\}"
+      },
+      {
+        "type": "expression",
         "id": "1",
         "color": "#c74440",
-        "latex": "x^{2}"
+        "latex": "x\\left|x\\right|"
+      },
+      {
+        "type": "expression",
+        "id": "3",
+        "color": "#388c46",
+        "latex": "-x^{2\\ }\\left\\{x<0\\right\\}"
+      },
+      {
+        "type": "expression",
+        "id": "4",
+        "color": "#6042a6"
+      },
+      {
+        "type": "expression",
+        "id": "5",
+        "color": "#000000"
       }
     ]
   },
